@@ -2,6 +2,8 @@
 
 #include "xvent/EventListener.h"
 
+namespace {
+
 const std::string ident = "concreteIdent123";
 
 class ConcreteEventListener : public xvent::EventListener {
@@ -14,4 +16,5 @@ public:
 
 TEST(EventListenerTests, givenEventListener_whenGettingIdent_expectCorrectIdent) {
     ASSERT_EQ(ident, ConcreteEventListener{}.getIdent());
+}
 }

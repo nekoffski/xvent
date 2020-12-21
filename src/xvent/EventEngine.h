@@ -4,6 +4,7 @@
 #include <queue>
 #include <unordered_map>
 
+#include "Error.h"
 #include "Event.h"
 #include "EventEmitter.h"
 #include "EventListener.h"
@@ -16,16 +17,25 @@ class EventEngine {
 
 public:
     void spreadEvents() {
+        for (auto& [ident, eventListener] : m_eventListeners) {
+
+            auto eventProvider = EventProvider{};
+
+            eventListener->handleEvents(eventProvider);
+        }
     }
 
     void registerEventListener(std::shared_ptr<EventListener> eventListener) {
         const auto ident = eventListener->getIdent();
-        if (m_eventListeners.contains(ident) || m_eventQueues.contains(ident)) {
-            // err
-        }
+        if (m_eventListeners.contains(ident) || m_eventQueues.contains(ident))
+            throw ListenerAlreadyRegistered{};
 
         m_eventListeners[ident] = eventListener;
         m_eventQueues[ident] = EventQueue{};
+    }
+
+    bool isListenerRegistered(const std::string& ident) const {
+        return m_eventListeners.contains(ident) && m_eventQueues.contains(ident);
     }
 
 private:
