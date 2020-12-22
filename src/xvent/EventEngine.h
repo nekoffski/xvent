@@ -9,6 +9,7 @@
 #include "EventEmitter.h"
 #include "EventListener.h"
 #include "EventProvider.h"
+#include "fwd.h"
 
 namespace xvent {
 
@@ -27,19 +28,19 @@ public:
 
     void registerEventListener(std::shared_ptr<EventListener> eventListener) {
         const auto ident = eventListener->getIdent();
-        if (m_eventListeners.contains(ident) || m_eventQueues.contains(ident))
+        if (m_eventListeners.contains(ident) || m_eventContainer.contains(ident))
             throw ListenerAlreadyRegistered{};
 
         m_eventListeners[ident] = eventListener;
-        m_eventQueues[ident] = EventQueue{};
+        m_eventContainer[ident] = CategoryToEventQueue{};
     }
 
     bool isListenerRegistered(const std::string& ident) const {
-        return m_eventListeners.contains(ident) && m_eventQueues.contains(ident);
+        return m_eventListeners.contains(ident) && m_eventContainer.contains(ident);
     }
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<EventListener>> m_eventListeners;
-    std::unordered_map<std::string, EventQueue> m_eventQueues;
+    EventListeners m_eventListeners;
+    EventContainer m_eventContainer;
 };
 }
