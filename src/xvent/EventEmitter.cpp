@@ -12,6 +12,6 @@ void EventEmitter::pushEvent(std::shared_ptr<Event> event, CategoryToEventQueue&
         categoryMap[categoryTypeIndex] = EventQueue{};
 
     auto& queue = categoryMap[categoryTypeIndex];
-    queue.push(event);
+    queue.push_back(event);
 }
 }

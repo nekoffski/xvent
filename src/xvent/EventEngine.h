@@ -15,37 +15,14 @@ namespace xvent {
 
 class EventEngine {
 public:
-    void spreadEvents() {
-        for (auto& [ident, eventListener] : m_eventListeners) {
+    EventEmitter createEmitter();
 
-            auto eventProvider = EventProvider{};
+    void spreadEvents();
+    void registerEventListener(std::shared_ptr<EventListener> eventListener);
+    void unregisterEventListener(std::shared_ptr<EventListener> eventListener);
+    void unregisterEventListener(const std::string& ident);
 
-            eventListener->handleEvents(eventProvider);
-        }
-    }
-
-    EventEmitter createEmitter() {
-        return EventEmitter{ m_eventContainer };
-    }
-
-    void registerEventListener(std::shared_ptr<EventListener> eventListener) {
-        const auto ident = eventListener->getIdent();
-        if (m_eventListeners.contains(ident) || m_eventContainer.contains(ident))
-            throw ListenerAlreadyRegistered{};
-
-        m_eventListeners[ident] = eventListener;
-        m_eventContainer[ident] = CategoryToEventQueue{};
-    }
-
-    void unregisterEventListener(std::shared_ptr<EventListener> eventListener) {
-        unregisterEventListener(eventListener->getIdent());
-    }
-
-    void unregisterEventListener(const std::string& ident) {}
-
-    bool isListenerRegistered(const std::string& ident) const {
-        return m_eventListeners.contains(ident) && m_eventContainer.contains(ident);
-    }
+    bool isListenerRegistered(const std::string& ident) const;
 
 private:
     EventListeners m_eventListeners;

@@ -27,11 +27,26 @@ TEST_F(EventEngineTests, givenEventEngine_whenCheckingIfUnregisteredListenerIsRe
     EXPECT_FALSE(eventEngine.isListenerRegistered("notExistingListener"));
 }
 
+TEST_F(EventEngineTests, givenEventEngine_whenUnregisteringNotExistingListener_shouldThrow) {
+    ASSERT_THROW(eventEngine.unregisterEventListener("notExistingListener"), xvent::ListenerNotFound);
+}
+
 TEST_F(EventEngineTests, givenEventEngine_whenRegisteringListener_shouldRegister) {
     auto listener = std::make_shared<ConcreteEventListener>();
     eventEngine.registerEventListener(listener);
 
     EXPECT_TRUE(eventEngine.isListenerRegistered(ConcreteEventListener::ident));
+}
+
+TEST_F(EventEngineTests, giventEventEngine_whenUnregisteringService_shouldUnregister) {
+    auto listener = std::make_shared<ConcreteEventListener>();
+    eventEngine.registerEventListener(listener);
+
+    EXPECT_TRUE(eventEngine.isListenerRegistered(ConcreteEventListener::ident));
+
+    eventEngine.unregisterEventListener(listener);
+
+    EXPECT_FALSE(eventEngine.isListenerRegistered(ConcreteEventListener::ident));
 }
 
 TEST_F(EventEngineTests, givenEventEngine_whenRegisteringListenerTwice_shouldThrow) {

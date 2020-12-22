@@ -46,8 +46,8 @@ TEST_F(EventEmitterTests, whenEmitting_everyListenerShouldReceiveEvent) {
     ASSERT_EQ(defQueue1.size(), 1);
     ASSERT_EQ(defQueue2.size(), 1);
 
-    ASSERT_EQ(defQueue1.front()->getEventTypeIndex(), typeid(EventA));
-    ASSERT_EQ(defQueue2.front()->getEventTypeIndex(), typeid(EventA));
+    ASSERT_EQ(defQueue1[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
+    ASSERT_EQ(defQueue2[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
 }
 
 TEST_F(EventEmitterTests, whenEmitting2Events_everyListenerShouldReceiveEvent) {
@@ -66,14 +66,11 @@ TEST_F(EventEmitterTests, whenEmitting2Events_everyListenerShouldReceiveEvent) {
     ASSERT_EQ(defQueue1.size(), 2);
     ASSERT_EQ(defQueue2.size(), 2);
 
-    ASSERT_EQ(defQueue1.front()->getEventTypeIndex(), typeid(EventA));
-    ASSERT_EQ(defQueue2.front()->getEventTypeIndex(), typeid(EventA));
+    ASSERT_EQ(defQueue1[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
+    ASSERT_EQ(defQueue2[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
 
-    defQueue1.pop();
-    defQueue2.pop();
-
-    ASSERT_EQ(defQueue1.front()->getEventTypeIndex(), typeid(EventB));
-    ASSERT_EQ(defQueue2.front()->getEventTypeIndex(), typeid(EventB));
+    ASSERT_EQ(defQueue1[1]->getEventTypeIndex(), std::type_index{ typeid(EventB) });
+    ASSERT_EQ(defQueue2[1]->getEventTypeIndex(), std::type_index{ typeid(EventB) });
 }
 
 TEST_F(EventEmitterTests, whenEmittingTo2Listeners_only2ListenersShouldReceiveEvent) {
@@ -94,12 +91,12 @@ TEST_F(EventEmitterTests, whenEmittingTo2Listeners_only2ListenersShouldReceiveEv
     auto& defQueue1 = m1[defCategoryType];
 
     ASSERT_EQ(defQueue1.size(), 1);
-    ASSERT_EQ(defQueue1.front()->getEventTypeIndex(), typeid(EventA));
+    ASSERT_EQ(defQueue1[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
 
     auto& defQueue2 = m2[defCategoryType];
 
     ASSERT_EQ(defQueue2.size(), 1);
-    ASSERT_EQ(defQueue2.front()->getEventTypeIndex(), typeid(EventA));
+    ASSERT_EQ(defQueue2[0]->getEventTypeIndex(), std::type_index{ typeid(EventA) });
 }
 
 TEST_F(EventEmitterTests, whenEmittingToListener_onlyListenerShouldReceiveEvent) {
