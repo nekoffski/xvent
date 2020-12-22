@@ -1,0 +1,19 @@
+name: Xvent unit test runner
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc-10]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Pull submodules
+        run: git submodule update --init --recursive
+      - name: Build
+        run: |
+          rm -rf ./build && mkdir build && cd build && cmake .. && make -j8 && cd ..
+      - name: Run tests
+        run: cd ./build && make test
