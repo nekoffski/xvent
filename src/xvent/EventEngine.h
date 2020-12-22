@@ -14,8 +14,6 @@
 namespace xvent {
 
 class EventEngine {
-    using EventQueue = std::queue<std::shared_ptr<Event>>;
-
 public:
     void spreadEvents() {
         for (auto& [ident, eventListener] : m_eventListeners) {
@@ -26,6 +24,10 @@ public:
         }
     }
 
+    EventEmitter createEmitter() {
+        return EventEmitter{ m_eventContainer };
+    }
+
     void registerEventListener(std::shared_ptr<EventListener> eventListener) {
         const auto ident = eventListener->getIdent();
         if (m_eventListeners.contains(ident) || m_eventContainer.contains(ident))
@@ -34,6 +36,12 @@ public:
         m_eventListeners[ident] = eventListener;
         m_eventContainer[ident] = CategoryToEventQueue{};
     }
+
+    void unregisterEventListener(std::shared_ptr<EventListener> eventListener) {
+        unregisterEventListener(eventListener->getIdent());
+    }
+
+    void unregisterEventListener(const std::string& ident) {}
 
     bool isListenerRegistered(const std::string& ident) const {
         return m_eventListeners.contains(ident) && m_eventContainer.contains(ident);

@@ -4,28 +4,25 @@
 #include <vector>
 
 #include "Error.h"
+#include "Event.h"
 #include "fwd.h"
 
 namespace xvent {
 
 class EventEmitter {
 public:
-    explicit EventEmitter(EventContainer& eventContainer)
-        : m_eventContainer(eventContainer) {
-    }
+    explicit EventEmitter(EventContainer& eventContaine);
 
     template <typename Ev, typename... Args>
     void emit(Args&&... args) {
         auto event = std::make_shared<Ev>(std::forward<Args>(args)...);
-        for (auto& [_, categoryMap] : m_eventContainer) {
-            auto& queue = categoryMap[event->getCategoryTypeIndex()];
-            queue.push(event);
-        }
+        for (auto& [_, categoryMap] : m_eventContainer)
+            pushEvent(event, categoryMap);
     }
 
     template <typename Ev, typename... Args>
     void emitTo(std::string destination, Args&&... args) {
-        emitTo<Ev, Args...>({ destination }, std::forward<Args>(args)...);
+        emitTo<Ev, Args...>(std::vector<std::string>{ destination }, std::forward<Args>(args)...);
     }
 
     template <typename Ev, typename... Args>
@@ -36,13 +33,13 @@ public:
             if (not m_eventContainer.contains(destination))
                 throw ListenerNotFound{};
 
-            auto& destinationContainer = m_eventContainer[destination];
-            auto& queue = destinationContainer[event->getCategoryTypeIndex()];
-            queue.push(event);
+            pushEvent(event, m_eventContainer[destination]);
         }
     }
 
 private:
+    void pushEvent(std::shared_ptr<Event> event, CategoryToEventQueue& categoryMap);
+
     EventContainer& m_eventContainer;
 };
 }
