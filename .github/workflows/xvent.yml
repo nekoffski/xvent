@@ -14,6 +14,6 @@ jobs:
         run: git submodule update --init --recursive
       - name: Build
         run: |
-          rm -rf ./build && mkdir build && cd build && cmake .. && make -j8 && cd ..
+          rm -rf ./build && mkdir build && cd build && CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10 cmake .. && make -j 16 && cd ..
       - name: Run tests
         run: cd ./build && make test
