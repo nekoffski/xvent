@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Category.h"
 #include "Event.h"
 #include "fwd.h"
 
@@ -30,7 +31,7 @@ public:
 
     EventQueue getAll() const;
 
-    template <typename... Categories>
+    template <CategoryType... Categories>
     EventQueue getByCategories() const {
         detail::TypeVector categories;
         detail::Extractor<Categories...>::extract(categories);

@@ -5,7 +5,7 @@
 
 namespace {
 
-struct CustomCategory {};
+struct CustomCategory : xvent::Category {};
 
 struct EventA : xvent::EventBase<EventA> {};
 

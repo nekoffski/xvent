@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <functional>
 #include <memory>
 #include <typeindex>
@@ -29,7 +30,11 @@ struct Event : std::enable_shared_from_this<Event> {
     }
 };
 
-template <typename Ev, typename Category = DefaultCategory>
+template <typename T>
+concept EventType = std::derived_from<T, Event>;
+
+// clang-format off
+template <typename Ev, CategoryType Category = DefaultCategory>
 struct EventBase : Event {
     std::type_index getEventTypeIndex() const final override {
         return typeid(Ev);
@@ -39,4 +44,5 @@ struct EventBase : Event {
         return typeid(Category);
     }
 };
+// clang-format on
 }
