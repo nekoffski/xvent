@@ -6,9 +6,11 @@
 namespace xvent {
 
 namespace detail {
+    using TypeVector = std::vector<std::type_index>;
+
     template <typename Category, typename... Rest>
     struct Extractor {
-        void extract(std::vector<std::type_index>& categories) {
+        static void extract(TypeVector& categories) {
             categories.emplace_back(typeid(Category));
             Extractor<Rest...>::extract(categories);
         }
@@ -16,7 +18,7 @@ namespace detail {
 
     template <typename Category>
     struct Extractor<Category> {
-        void extract(std::vector<std::type_index>& categories) {
+        static void extract(TypeVector& categories) {
             categories.emplace_back(typeid(Category));
         }
     };
@@ -38,7 +40,7 @@ public:
 
     template <typename... Categories>
     EventQueue getByCategories() {
-        std::vector<std::type_index> categories;
+        detail::TypeVector categories;
         detail::Extractor<Categories...>::extract(categories);
 
         EventQueue events;
