@@ -26,20 +26,12 @@ namespace detail {
 
 class EventProvider {
 public:
-    explicit EventProvider(CategoryToEventQueue& categoryToEventQueue)
-        : m_categoryToEventQueue(categoryToEventQueue) {
-    }
+    explicit EventProvider(CategoryToEventQueue& categoryToEventQueue);
 
-    EventQueue getAll() {
-        EventQueue events;
-        for (auto& [_, eventQueue] : m_categoryToEventQueue)
-            events.insert(events.begin(), eventQueue.begin(), eventQueue.end());
-
-        return events;
-    }
+    EventQueue getAll() const;
 
     template <typename... Categories>
-    EventQueue getByCategories() {
+    EventQueue getByCategories() const {
         detail::TypeVector categories;
         detail::Extractor<Categories...>::extract(categories);
 

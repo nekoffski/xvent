@@ -55,4 +55,86 @@ TEST_F(EventEngineTests, givenEventEngine_whenRegisteringListenerTwice_shouldThr
 
     ASSERT_THROW(eventEngine.registerEventListener(listener), xvent::ListenerAlreadyRegistered);
 }
+
+struct EventA : xvent::EventBase<EventA> {};
+struct EventB : xvent::EventBase<EventB> {};
+
+struct Listener1 : public xvent::EventListener {
+    using xvent::EventListener::EventListener;
+
+    void handleEvents(const xvent::EventProvider& eventProvider) {
+        for (auto& event : eventProvider.getAll())
+            ++events;
+    }
+
+    int events = 0;
+};
+
+struct Listener2 : public xvent::EventListener {
+    using xvent::EventListener::EventListener;
+
+    void handleEvents(const xvent::EventProvider& eventProvider) {
+        for (auto& event : eventProvider.getAll())
+            ++events;
+    }
+
+    int events = 0;
+};
+
+class EventEngineEventsTest : public testing::Test {
+protected:
+    void SetUp() override {
+        m_listener1 = std::make_shared<Listener1>("listener1");
+        m_listener2 = std::make_shared<Listener2>("listener2");
+
+        m_listener1->events = 0;
+        m_listener2->events = 0;
+
+        m_eventEngine.registerEventListener(m_listener1);
+        m_eventEngine.registerEventListener(m_listener2);
+    }
+
+    xvent::EventEngine m_eventEngine;
+
+    std::shared_ptr<Listener1> m_listener1;
+    std::shared_ptr<Listener2> m_listener2;
+};
+
+TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsWithoutAnyEventEmitted_everyListenerShouldNotGetEvent) {
+    m_eventEngine.spreadEvents();
+
+    EXPECT_EQ(m_listener1->events, 0);
+    EXPECT_EQ(m_listener2->events, 0);
+}
+
+TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEvents_everyListenerShouldGetOneEvent) {
+    auto eventEmitter = m_eventEngine.createEmitter();
+    eventEmitter.emit<EventA>();
+
+    m_eventEngine.spreadEvents();
+
+    EXPECT_EQ(m_listener1->events, 1);
+    EXPECT_EQ(m_listener2->events, 1);
+}
+
+TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsTwiceWithoutNewEvents_everyListenerShouldGetOneEvent) {
+    auto eventEmitter = m_eventEngine.createEmitter();
+    eventEmitter.emit<EventA>();
+
+    m_eventEngine.spreadEvents();
+    m_eventEngine.spreadEvents();
+
+    EXPECT_EQ(m_listener1->events, 1);
+    EXPECT_EQ(m_listener2->events, 1);
+}
+
+TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsEmittedToOnlyOneListener_onlyThisListenerShouldGetEvent) {
+    auto eventEmitter = m_eventEngine.createEmitter();
+    eventEmitter.emitTo<EventA>("listener1");
+
+    m_eventEngine.spreadEvents();
+
+    EXPECT_EQ(m_listener1->events, 1);
+    EXPECT_EQ(m_listener2->events, 0);
+}
 }

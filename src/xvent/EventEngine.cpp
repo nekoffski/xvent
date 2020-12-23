@@ -8,6 +8,8 @@ void EventEngine::spreadEvents() {
         auto eventProvider = EventProvider{ m_eventContainer[ident] };
         eventListener->handleEvents(eventProvider);
     }
+
+    m_eventContainer.clear();
 }
 
 EventEmitter EventEngine::createEmitter() {
