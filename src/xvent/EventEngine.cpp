@@ -9,7 +9,8 @@ void EventEngine::spreadEvents() {
         eventListener->handleEvents(eventProvider);
     }
 
-    m_eventContainer.clear();
+    for (auto& [_, events] : m_eventContainer)
+        events.clear();
 }
 
 EventEmitter EventEngine::createEmitter() {

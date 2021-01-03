@@ -137,4 +137,33 @@ TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsEmittedToOnlyOneLis
     EXPECT_EQ(m_listener1->events, 1);
     EXPECT_EQ(m_listener2->events, 0);
 }
+
+struct Listener3 : public xvent::EventListener {
+    using xvent::EventListener::EventListener;
+
+    void handleEvents(const xvent::EventProvider& eventProvider) {
+        for (auto& event : eventProvider.getAll())
+            ++events;
+    }
+
+    int events = 0;
+};
+
+TEST_F(EventEngineEventsTest, giventEventListenerRegisteredLate_shouldGetEvent) {
+    auto eventEmitter2 = m_eventEngine.createEmitter();
+    xvent::EventEmitter eventEmitter(std::move(eventEmitter2));
+
+    auto listener3 = std::make_shared<Listener3>("listener3");
+    m_eventEngine.registerEventListener(listener3);
+
+    eventEmitter.emit<EventA>();
+
+    m_eventEngine.spreadEvents();
+    EXPECT_EQ(listener3->events, 1);
+
+    eventEmitter.emit<EventA>();
+
+    m_eventEngine.spreadEvents();
+    EXPECT_EQ(listener3->events, 2);
+}
 }
