@@ -14,19 +14,21 @@ public:
     explicit EventEmitter(EventContainer& eventContaine);
 
     template <EventType Ev, typename... Args>
-    void emit(Args&&... args) {
+    Result emit(Args&&... args) {
         auto event = std::make_shared<Ev>(std::forward<Args>(args)...);
         for (auto& [_, categoryMap] : m_eventContainer)
             pushEvent(event, categoryMap);
+
+        return Result{ event->m_result.get_future() };
     }
 
     template <EventType Ev, typename... Args>
-    void emitTo(std::string destination, Args&&... args) {
-        emitTo<Ev, Args...>(std::vector<std::string>{ destination }, std::forward<Args>(args)...);
+    Result emitTo(std::string destination, Args&&... args) {
+        return emitTo<Ev, Args...>(std::vector<std::string>{ destination }, std::forward<Args>(args)...);
     }
 
     template <EventType Ev, typename... Args>
-    void emitTo(std::vector<std::string> destinations, Args&&... args) {
+    Result emitTo(std::vector<std::string> destinations, Args&&... args) {
         auto event = std::make_shared<Ev>(std::forward<Args>(args)...);
 
         for (auto& destination : destinations) {
@@ -35,6 +37,8 @@ public:
 
             pushEvent(event, m_eventContainer[destination]);
         }
+
+        return Result{ event->m_result.get_future() };
     }
 
 private:

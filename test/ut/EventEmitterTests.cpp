@@ -31,6 +31,26 @@ TEST_F(EventEmitterTests, whenEmittingEventToNotExistingListener_shouldThrowErro
     ASSERT_THROW(m_eventEmitter->emitTo<EventA>("NotExistingListener"), xvent::ListenerNotFound);
 }
 
+TEST_F(EventEmitterTests, givenEventResult_whenWaitingWithTimeout_shouldThrowError) {
+	auto result = m_eventEmitter->emitTo<EventA>(ident1);
+	EXPECT_FALSE(result.isReady());
+	ASSERT_THROW(result.wait(5ms), xvent::ResultTimeout);
+}
+
+TEST_F(EventEmitterTests, givenEventResult_whenWaitingAndEventIsSet_shouldReturnEvent) {
+	auto result = m_eventEmitter->emitTo<EventA>(ident1);
+	EXPECT_FALSE(result.isReady());
+
+    auto& m1 = m_eventContainer[ident1];
+	auto& event = m1[defCategoryType][0];
+	event->setResult<EventB>();
+
+	EXPECT_TRUE(result.isReady());
+	
+	auto eventResult = result.wait(1ms);
+	EXPECT_TRUE(eventResult->is<EventB>());
+}
+
 TEST_F(EventEmitterTests, whenEmitting_everyListenerShouldReceiveEvent) {
     m_eventEmitter->emit<EventA>();
 

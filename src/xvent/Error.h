@@ -8,4 +8,6 @@ struct XventError : public std::exception {};
 struct ListenerAlreadyRegistered : XventError {};
 
 struct ListenerNotFound : XventError {};
+
+struct ResultTimeout : XventError {};
 }
