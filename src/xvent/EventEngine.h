@@ -15,7 +15,7 @@ namespace xvent {
 
 class EventEngine {
 public:
-    EventEmitter createEmitter();
+	std::shared_ptr<EventEmitter> createEmitter();
 
     void spreadEvents();
     void registerEventListener(std::shared_ptr<EventListener> eventListener);

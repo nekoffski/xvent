@@ -13,8 +13,8 @@ void EventEngine::spreadEvents() {
         events.clear();
 }
 
-EventEmitter EventEngine::createEmitter() {
-    return EventEmitter{ m_eventContainer };
+std::shared_ptr<EventEmitter> EventEngine::createEmitter() {
+    return std::make_shared<EventEmitter>(m_eventContainer);
 }
 
 void EventEngine::registerEventListener(std::shared_ptr<EventListener> eventListener) {

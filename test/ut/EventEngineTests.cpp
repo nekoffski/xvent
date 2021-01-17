@@ -109,7 +109,7 @@ TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsWithoutAnyEventEmit
 
 TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEvents_everyListenerShouldGetOneEvent) {
     auto eventEmitter = m_eventEngine.createEmitter();
-    eventEmitter.emit<EventA>();
+    eventEmitter->emit<EventA>();
 
     m_eventEngine.spreadEvents();
 
@@ -119,7 +119,7 @@ TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEvents_everyListenerShoul
 
 TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsTwiceWithoutNewEvents_everyListenerShouldGetOneEvent) {
     auto eventEmitter = m_eventEngine.createEmitter();
-    eventEmitter.emit<EventA>();
+    eventEmitter->emit<EventA>();
 
     m_eventEngine.spreadEvents();
     m_eventEngine.spreadEvents();
@@ -130,7 +130,7 @@ TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsTwiceWithoutNewEven
 
 TEST_F(EventEngineEventsTest, givenEngine_whenSpreadingEventsEmittedToOnlyOneListener_onlyThisListenerShouldGetEvent) {
     auto eventEmitter = m_eventEngine.createEmitter();
-    eventEmitter.emitTo<EventA>("listener1");
+    eventEmitter->emitTo<EventA>("listener1");
 
     m_eventEngine.spreadEvents();
 
@@ -150,18 +150,17 @@ struct Listener3 : public xvent::EventListener {
 };
 
 TEST_F(EventEngineEventsTest, giventEventListenerRegisteredLate_shouldGetEvent) {
-    auto eventEmitter2 = m_eventEngine.createEmitter();
-    xvent::EventEmitter eventEmitter(std::move(eventEmitter2));
-
+    auto eventEmitter = m_eventEngine.createEmitter();
+    
     auto listener3 = std::make_shared<Listener3>("listener3");
     m_eventEngine.registerEventListener(listener3);
 
-    eventEmitter.emit<EventA>();
+    eventEmitter->emit<EventA>();
 
     m_eventEngine.spreadEvents();
     EXPECT_EQ(listener3->events, 1);
 
-    eventEmitter.emit<EventA>();
+    eventEmitter->emit<EventA>();
 
     m_eventEngine.spreadEvents();
     EXPECT_EQ(listener3->events, 2);
