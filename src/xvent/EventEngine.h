@@ -21,6 +21,7 @@ public:
     void registerEventListener(std::shared_ptr<EventListener> eventListener);
     void unregisterEventListener(std::shared_ptr<EventListener> eventListener);
     void unregisterEventListener(const std::string& ident);
+	EventProvider getEventProvider(const std::string& ident);
 
     bool isListenerRegistered(const std::string& ident) const;
 

@@ -16,7 +16,7 @@ public:
         return m_ident;
     }
 
-    virtual void handleEvents(const EventProvider&) = 0;
+    virtual void handleEvents(const EventProvider&) {}
 
 private:
     std::string m_ident;

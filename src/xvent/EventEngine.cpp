@@ -13,6 +13,10 @@ void EventEngine::spreadEvents() {
         events.clear();
 }
 
+EventProvider EventEngine::getEventProvider(const std::string& ident) {
+    return EventProvider{ m_eventContainer[ident] };
+}
+
 std::shared_ptr<EventEmitter> EventEngine::createEmitter() {
     return std::make_shared<EventEmitter>(m_eventContainer);
 }
