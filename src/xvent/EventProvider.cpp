@@ -9,12 +9,10 @@ EventProvider::EventProvider(CategoryToEventQueue& categoryToEventQueue)
 EventQueue EventProvider::getAll() const {
     EventQueue events;
     for (auto& [_, eventQueue] : m_categoryToEventQueue) {
-		{
-			auto lock = eventQueue.lock();
-			events.insert(events.begin(), eventQueue.begin(), eventQueue.end());
-		}
-		eventQueue.clear();
-	}
+        auto lock = eventQueue.lock();
+        events.insert(events.begin(), eventQueue.begin(), eventQueue.end());
+        eventQueue.clearUnsafe();
+    }
 
     return events;
 }

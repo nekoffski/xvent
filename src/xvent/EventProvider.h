@@ -42,12 +42,10 @@ public:
                 continue;
 
             auto& queue = m_categoryToEventQueue[categoryIndex];
-			{
-				auto lock = queue.lock();
-				events.insert(events.begin(), queue.begin(), queue.end());
-			}
-			queue.clear();
-		}
+            auto lock = queue.lock();
+            events.insert(events.begin(), queue.begin(), queue.end());
+            queue.clearUnsafe();
+        }
 
         return events;
     }

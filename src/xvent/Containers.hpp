@@ -54,6 +54,10 @@ public:
         m_data.clear();
     }
 
+	void clearUnsafe() {
+		m_data.clear();
+	}
+
     void push_back(const T& value) {
         std::lock_guard guard{ *m_mutex };
         m_data.push_back(value);
