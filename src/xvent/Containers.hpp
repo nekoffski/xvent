@@ -10,7 +10,9 @@ namespace xvent {
 template <typename T>
 class AtomicVector {
 public:
-    explicit AtomicVector() = default;
+    explicit AtomicVector()
+        : m_mutex(std::make_shared<std::mutex>()) {
+    }
 
     AtomicVector(const AtomicVector<T>& rhs)
         : m_data(rhs.m_data)
@@ -91,7 +93,9 @@ private:
 template <typename K, typename T>
 class AtomicUnorderedMap {
 public:
-    explicit AtomicUnorderedMap() = default;
+    explicit AtomicUnorderedMap()
+        : m_mutex(std::make_shared<std::mutex>()) {
+    }
 
     AtomicUnorderedMap(const AtomicUnorderedMap<K, T>& rhs)
         : m_data(rhs.m_data)
@@ -151,7 +155,7 @@ public:
     }
 
 private:
-    std::shared_ptr<std::mutex> m_mutex = std::make_shared<std::mutex>();
+    std::shared_ptr<std::mutex> m_mutex;
     std::unordered_map<K, T> m_data;
 };
 }

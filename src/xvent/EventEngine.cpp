@@ -8,9 +8,6 @@ void EventEngine::spreadEvents() {
         auto eventProvider = EventProvider{ m_eventContainer[ident] };
         eventListener->handleEvents(eventProvider);
     }
-
-    for (auto& [_, events] : m_eventContainer)
-        events.clear();
 }
 
 EventProvider EventEngine::getEventProvider(const std::string& ident) {
