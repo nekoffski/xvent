@@ -1,17 +1,19 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <typeindex>
 #include <unordered_map>
+#include <vector>
+
+#include "Containers.hpp"
 
 namespace xvent {
 
 struct Event;
 class EventListener;
 
-using EventListeners = std::unordered_map<std::string, std::shared_ptr<EventListener>>;
-using EventQueue = std::vector<std::shared_ptr<Event>>;
-using CategoryToEventQueue = std::unordered_map<std::type_index, EventQueue>;
-using EventContainer = std::unordered_map<std::string, CategoryToEventQueue>;
+using EventListeners = AtomicUnorderedMap<std::string, std::shared_ptr<EventListener>>;
+using EventQueue = AtomicVector<std::shared_ptr<Event>>;
+using CategoryToEventQueue = AtomicUnorderedMap<std::type_index, EventQueue>;
+using EventContainer = AtomicUnorderedMap<std::string, CategoryToEventQueue>;
 };
