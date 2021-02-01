@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include <mutex>
 #include <utility>
 #include <vector>
 
@@ -11,10 +13,15 @@ namespace xvent {
 
 class EventEmitter {
 public:
-    explicit EventEmitter(EventContainer& eventContaine);
+    explicit EventEmitter(EventContainer& eventContainer);
+
+    std::shared_ptr<EventEmitter> clone() {
+        return std::make_shared<EventEmitter>(m_eventContainer);
+    }
 
     template <EventType Ev, typename... Args>
     Result emit(Args&&... args) {
+        std::lock_guard guard{ m_emitterMutex };
         auto event = std::make_shared<Ev>(std::forward<Args>(args)...);
         for (auto& [_, categoryMap] : m_eventContainer)
             pushEvent(event, categoryMap);
@@ -29,6 +36,7 @@ public:
 
     template <EventType Ev, typename... Args>
     Result emitTo(std::vector<std::string> destinations, Args&&... args) {
+        std::lock_guard guard{ m_emitterMutex };
         auto event = std::make_shared<Ev>(std::forward<Args>(args)...);
 
         for (auto& destination : destinations) {
@@ -45,5 +53,6 @@ private:
     void pushEvent(std::shared_ptr<Event> event, CategoryToEventQueue& categoryMap);
 
     EventContainer& m_eventContainer;
+    std::mutex m_emitterMutex;
 };
 }
