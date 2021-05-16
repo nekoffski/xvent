@@ -3,6 +3,7 @@
 #include <concepts>
 #include <functional>
 #include <memory>
+#include <string>
 #include <typeindex>
 
 #include "Category.h"
@@ -12,6 +13,11 @@ namespace xvent {
 struct Event : std::enable_shared_from_this<Event> {
     virtual std::type_index getEventTypeIndex() const = 0;
     virtual std::type_index getCategoryTypeIndex() const = 0;
+    
+    
+    virtual std::string asString() const {
+        return "";
+    }
 
     template <typename T>
     void on(std::function<void(std::shared_ptr<T>)> callback) {
