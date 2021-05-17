@@ -29,6 +29,10 @@ public:
             callback(std::dynamic_pointer_cast<T>(shared_from_this()));
     }
 
+    virtual std::string asString() const {
+        return "Name not specified";
+    }
+
     template <typename T>
     bool is() {
         return typeid(T) == getEventTypeIndex();
